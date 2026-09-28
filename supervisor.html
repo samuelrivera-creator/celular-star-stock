@@ -26,20 +26,20 @@
   <a class="top-logo" href="index.html"><img src="img/celular-star.jpg"><span><b>Celular Star</b><small>Supervisores</small></span></a>
   <div class="top-actions"><span class="online"><i></i> En línea</span><button id="logout">Salir</button></div>
 </header>
-<main class="panel">
-  <div class="welcome">
+<main class="panel"><div class="panel-tabs"><button class="active" data-view="inventory">Inventario</button><button data-view="requests">Solicitudes <span id="pendingBadge">0</span></button></div>
+  <div class="welcome inventory-section">
     <div><span class="kicker">SUCURSAL ASIGNADA</span><h1>San Miguel</h1><p>Hola, <b>Responsable de sucursal</b>. Revisa y confirma la existencia física disponible.</p></div>
     <div class="sync"><span>ÚLTIMA CONSULTA SQL</span><b>Hoy · 10:42 a. m.</b><small>Inventario base actualizado</small></div>
   </div>
 
-  <div class="metrics">
+  <div class="metrics inventory-section">
     <div><span>Modelos</span><b id="modelCount">0</b><small>en inventario</small></div>
     <div><span>Stock SQL</span><b id="sqlTotal">0</b><small>unidades</small></div>
     <div><span>Stock validado</span><b id="physicalTotal">0</b><small>unidades físicas</small></div>
     <div class="metric-diff"><span>Diferencia</span><b id="diffTotal">0</b><small>vs. sistema</small></div>
   </div>
 
-  <div id="adminBranchBar" class="admin-branch-bar" style="display:none">
+  <div id="adminBranchBar" class="admin-branch-bar inventory-section" style="display:none">
   <div>
     <span class="kicker">VISTA ADMINISTRADOR</span>
     <label for="adminBranch">Sucursal / almacén</label>
@@ -48,14 +48,17 @@
     <option value="ALL">Todas las sucursales</option>
   </select>
 </div>
-<div class="tools">
+<div class="tools inventory-section">
     <label class="search"><span>⌕</span><input id="productSearch" placeholder="Buscar modelo..."></label>
     <button id="validateAll">✓ Validar inventario</button>
   </div>
 
-  <div class="list-head"><span>EQUIPOS</span><small id="visibleCount"></small></div>
-  <div id="inventoryList" class="inventory-list"></div>
-</main>
+  <div class="list-head inventory-section"><span>EQUIPOS</span><small id="visibleCount"></small></div>
+  <div id="inventoryList" class="inventory-list inventory-section"></div>
+<section id="requestsView" class="requests-view" style="display:none">
+<div class="requests-head"><div><span class="kicker">SOLICITUDES DE CLIENTES</span><h2>Seguimiento</h2></div><div class="request-filters"><select id="requestStatus"><option value="ALL">Todos los estados</option><option value="PENDIENTE">Pendientes</option><option value="CONTACTADO">Contactados</option><option value="CERRADO">Cerrados</option></select><input id="requestSearch" placeholder="Buscar cliente o modelo..."></div></div>
+<div id="requestsList" class="requests-list"></div><div id="requestsEmpty" class="requests-empty">No hay solicitudes para mostrar.</div>
+</section></main>
 <div class="mobile-summary"><div><span>Stock físico</span><b id="mobileTotal">0</b></div><button id="mobileValidate">Validar inventario</button></div>
 </section>
 

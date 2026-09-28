@@ -1,8 +1,9 @@
-CELULAR STAR V9
-Correcciones:
-- Consultar / Solicitar vuelve a abrir el modal correctamente.
-- Sucursales VP excluidas del catálogo público.
-- Selector público muestra únicamente sucursales comerciales normales.
-- Filtro de sucursal + marca + búsqueda funcionan juntos.
-- La sucursal elegida queda preseleccionada en la solicitud.
-- Panel interno conserva acceso a almacenes según rol.
+CELULAR STAR V10
+- Hero: 'Varias sucursales' ahora es funcional y lleva al selector público.
+- Panel privado: pestaña Solicitudes.
+- Supervisor ve solicitudes de su almacén; ADMIN ve todas.
+- Estados: PENDIENTE, CONTACTADO, CERRADO.
+- Acceso rápido a WhatsApp y teléfono.
+- Backend agrega PATCH /api/solicitudes/<id>.
+- SAP continúa estrictamente solo lectura.
+IMPORTANTE: reemplazar también backend/app.py local y reiniciar Python.

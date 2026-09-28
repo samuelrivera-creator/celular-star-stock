@@ -147,5 +147,15 @@ def requests():
  else:rs=c.execute("SELECT * FROM solicitudes WHERE codigo_almacen=? ORDER BY id DESC",(str(u["codigo_almacen"]),)).fetchall()
  a=[dict(x) for x in rs];c.close();return jsonify(ok=True,solicitudes=a)
 
+@app.patch("/api/solicitudes/<int:sid>")
+@auth
+def update_request(sid):
+ u=request.current_user;d=request.get_json(force=True);estado=str(d.get("estado","")).upper()
+ if estado not in ("PENDIENTE","CONTACTADO","CERRADO"):return jsonify(ok=False,error="Estado invalido"),400
+ c=local();r=c.execute("SELECT * FROM solicitudes WHERE id=?",(sid,)).fetchone()
+ if not r:c.close();return jsonify(ok=False,error="Solicitud no encontrada"),404
+ if u["rol"]!="ADMIN" and str(r["codigo_almacen"])!=str(u["codigo_almacen"]):c.close();return jsonify(ok=False,error="No autorizado"),403
+ c.execute("UPDATE solicitudes SET estado=? WHERE id=?",(estado,sid));c.commit();c.close();return jsonify(ok=True)
+
 init()
 if __name__=="__main__":app.run(host="0.0.0.0",port=int(os.getenv("PORT","5000")),debug=False)

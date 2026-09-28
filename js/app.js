@@ -66,3 +66,9 @@ $("#form").onsubmit=async e=>{e.preventDefault();const o=$("#branch").selectedOp
 window.addEventListener("scroll",()=>$("#header").classList.toggle("scrolled",scrollY>25));
 loadInventory();
 if(window.gsap&&!matchMedia("(prefers-reduced-motion: reduce)").matches){gsap.from(".hero-copy>*",{opacity:0,y:25,duration:.6,stagger:.08});gsap.from(".phone",{opacity:0,y:30,rotation:15,duration:.9})}
+
+const heroBranchCta=document.querySelector("#heroBranchCta");
+if(heroBranchCta)heroBranchCta.onclick=()=>{
+ document.querySelector("#catalogo").scrollIntoView({behavior:"smooth"});
+ setTimeout(()=>{const x=document.querySelector("#publicBranch");if(x){x.focus();x.closest(".branch-select-shell")?.classList.add("attention");setTimeout(()=>x.closest(".branch-select-shell")?.classList.remove("attention"),900)}},550);
+};
