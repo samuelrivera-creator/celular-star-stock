@@ -27,9 +27,8 @@ async function loadInventory(){
    map.get(r.codigo).branches.push([r.sucursal,Number(r.stock_mostrar??r.stock)||0,String(r.codigo_almacen)]);
   });
   products=[...map.values()];
-  const sel=$("#publicBranch");
-  sel.innerHTML='<option value="ALL">Todas las sucursales</option>'+[...branches.entries()].sort((a,b)=>a[1].localeCompare(b[1])).map(([c,n])=>`<option value="${c}">${n}</option>`).join("");
-  sel.onchange=()=>{activeBranch=sel.value;render()};
+  window.publicBranches=[...branches.entries()].sort((a,b)=>a[1].localeCompare(b[1]));
+  buildBranchPicker();
   $("#models").textContent=products.length;$("#units").textContent=products.reduce((a,p)=>a+totalBranches(p.branches),0);render();
  }catch(e){console.error(e);$("#products").innerHTML="";$("#empty").style.display="block";$("#empty h3").textContent="No pudimos cargar el inventario";$("#empty p").textContent="Intenta nuevamente en unos momentos."}
 }
@@ -58,7 +57,7 @@ function openModal(code){
 function updateBranch(){const o=$("#branch").selectedOptions[0];maxQty=Number(o?.dataset.stock)||1;$("#available").textContent=`${maxQty} unidades disponibles en esta sucursal`;$("#limit").textContent=`Máximo: ${maxQty}`;$("#qty").value=Math.min(Number($("#qty").value)||1,maxQty)}
 function closeModal(){$("#modal").classList.remove("open");document.body.style.overflow=""}
 $$("#filters button").forEach(b=>b.onclick=()=>{$$("#filters button").forEach(x=>x.classList.remove("active"));b.classList.add("active");activeBrand=b.dataset.brand;render()});
-$("#search").oninput=render;$("#clear").onclick=()=>{$("#search").value="";activeBrand="Todos";activeBranch="ALL";$("#publicBranch").value="ALL";$$("#filters button").forEach(x=>x.classList.toggle("active",x.dataset.brand==="Todos"));render()};
+$("#search").oninput=render;$("#clear").onclick=()=>{$("#search").value="";activeBrand="Todos";activeBranch="ALL";$("#selectedBranchLabel").textContent="Todas las sucursales";buildBranchPicker();$$("#filters button").forEach(x=>x.classList.toggle("active",x.dataset.brand==="Todos"));render()};
 $("#branch").onchange=updateBranch;$("#minus").onclick=()=>$("#qty").value=Math.max(1,Number($("#qty").value)-1);$("#plus").onclick=()=>$("#qty").value=Math.min(maxQty,Number($("#qty").value)+1);$("#close").onclick=closeModal;$("#modal").onclick=e=>{if(e.target===$("#modal"))closeModal()};
 $("#form").onsubmit=async e=>{e.preventDefault();const o=$("#branch").selectedOptions[0];const payload={codigo:selected.codigo,codigo_almacen:o.dataset.whs,cantidad:Number($("#qty").value),nombre:$("#name").value.trim(),telefono:$("#tel").value.trim(),correo:$("#email").value.trim(),mensaje:$("#message").value.trim()};
  try{const r=await fetch(`${API_BASE}/api/solicitudes`,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(payload)});const j=await r.json();if(!r.ok)throw Error(j.error||"Error");closeModal();Swal.fire({title:"Solicitud registrada",text:"Tu solicitud fue enviada correctamente.",icon:"success",confirmButtonColor:"#07111f"});e.target.reset()}
@@ -67,8 +66,14 @@ window.addEventListener("scroll",()=>$("#header").classList.toggle("scrolled",sc
 loadInventory();
 if(window.gsap&&!matchMedia("(prefers-reduced-motion: reduce)").matches){gsap.from(".hero-copy>*",{opacity:0,y:25,duration:.6,stagger:.08});gsap.from(".phone",{opacity:0,y:30,rotation:15,duration:.9})}
 
-const heroBranchCta=document.querySelector("#heroBranchCta");
-if(heroBranchCta)heroBranchCta.onclick=()=>{
- document.querySelector("#catalogo").scrollIntoView({behavior:"smooth"});
- setTimeout(()=>{const x=document.querySelector("#publicBranch");if(x){x.focus();x.closest(".branch-select-shell")?.classList.add("attention");setTimeout(()=>x.closest(".branch-select-shell")?.classList.remove("attention"),900)}},550);
-};
+
+function buildBranchPicker(){
+ const options=[["ALL","Todas las sucursales"],...(window.publicBranches||[])];
+ $("#branchOptions").innerHTML=options.map(([code,name])=>`<button type="button" class="branch-option ${String(code)===String(activeBranch)?"active":""}" data-code="${code}" data-name="${name}"><span class="radio"></span><span><b>${name}</b><small>${code==="ALL"?"Ver disponibilidad consolidada":"Consultar esta sucursal"}</small></span></button>`).join("");
+ $$(".branch-option").forEach(btn=>btn.onclick=()=>selectPublicBranch(btn.dataset.code,btn.dataset.name));
+}
+function openBranchPicker(){$("#branchSheet").classList.add("open");document.body.style.overflow="hidden";buildBranchPicker()}
+function closeBranchPicker(){$("#branchSheet").classList.remove("open");document.body.style.overflow=""}
+function selectPublicBranch(code,name){activeBranch=code;$("#selectedBranchLabel").textContent=name;closeBranchPicker();render();document.querySelector("#catalogo").scrollIntoView({behavior:"smooth",block:"start"})}
+$("#branchPickerTrigger").onclick=openBranchPicker;$("#closeBranchSheet").onclick=closeBranchPicker;$("#branchSheet").onclick=e=>{if(e.target===$("#branchSheet"))closeBranchPicker()};
+const heroBranchCta=$("#heroBranchCta");if(heroBranchCta)heroBranchCta.onclick=openBranchPicker;
