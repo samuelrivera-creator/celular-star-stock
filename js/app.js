@@ -1,6 +1,6 @@
 
 let products=[];
-const API_BASE = localStorage.getItem("CELULAR_STAR_API") || "http://127.0.0.1:5000";
+const API_BASE = localStorage.getItem("CELULAR_STAR_API") || "https://desktop-tl72une.tail367c47.ts.net/celularstar";
 
 const demoProducts=[
 {id:1,codigo:"TL-150129",brand:"Samsung",model:"Samsung A16 5G EE",short:"A16",specs:"8 GB RAM · 256 GB",colors:["#ff9d00","#654000"],branches:[["Sucursal MiniCentro San Vicente",20],["Sucursal Minicentro Zacatecoluca",15]]},
@@ -92,3 +92,4 @@ if(window.gsap&&!matchMedia("(prefers-reduced-motion: reduce)").matches){
  gsap.registerPlugin(ScrollTrigger);
  gsap.from(".steps article",{scrollTrigger:{trigger:".steps",start:"top 82%"},opacity:0,y:30,duration:.6,stagger:.12});
 }
+
