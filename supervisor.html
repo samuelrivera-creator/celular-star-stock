@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="es"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#07111f"><title>Celular Star | Supervisores</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/supervisor.css"></head>
+<body>
+<section id="loginView" class="login-view">
+  <div class="login-brand"><img src="img/celular-star.jpg"><span><b>Celular Star</b><small>Control de disponibilidad</small></span></div>
+  <div class="login-wrap">
+    <div class="login-copy"><span class="kicker">ACCESO PRIVADO</span><h1>Inventario real,<br><em>siempre validado.</em></h1><p>Confirma en segundos la disponibilidad física de tu sucursal.</p><div class="login-feature"><i></i><span>Optimizado para actualización desde teléfono</span></div></div>
+    <form id="loginForm" class="login-form">
+      <div><span class="kicker">SUPERVISORES</span><h2>Bienvenido</h2><p>Ingresa tus credenciales para continuar.</p></div>
+      <label>Usuario<input id="user" autocomplete="username" required></label>
+      <label>Contraseña<div class="password"><input id="pass" type="password" autocomplete="current-password" required><button type="button" id="showPass">Ver</button></div></label>
+      <button class="login-btn">Ingresar <span>→</span></button>
+      
+      <a href="index.html">← Volver al catálogo</a>
+    </form>
+  </div>
+</section>
+
+<section id="panelView" class="panel-view">
+<header class="topbar">
+  <a class="top-logo" href="index.html"><img src="img/celular-star.jpg"><span><b>Celular Star</b><small>Supervisores</small></span></a>
+  <div class="top-actions"><span class="online"><i></i> En línea</span><button id="logout">Salir</button></div>
+</header>
+<main class="panel">
+  <div class="welcome">
+    <div><span class="kicker">SUCURSAL ASIGNADA</span><h1>San Miguel</h1><p>Hola, <b>Responsable de sucursal</b>. Revisa y confirma la existencia física disponible.</p></div>
+    <div class="sync"><span>ÚLTIMA CONSULTA SQL</span><b>Hoy · 10:42 a. m.</b><small>Inventario base actualizado</small></div>
+  </div>
+
+  <div class="metrics">
+    <div><span>Modelos</span><b id="modelCount">0</b><small>en inventario</small></div>
+    <div><span>Stock SQL</span><b id="sqlTotal">0</b><small>unidades</small></div>
+    <div><span>Stock validado</span><b id="physicalTotal">0</b><small>unidades físicas</small></div>
+    <div class="metric-diff"><span>Diferencia</span><b id="diffTotal">0</b><small>vs. sistema</small></div>
+  </div>
+
+  <div id="adminBranchBar" class="admin-branch-bar" style="display:none">
+  <div>
+    <span class="kicker">VISTA ADMINISTRADOR</span>
+    <label for="adminBranch">Sucursal / almacén</label>
+  </div>
+  <select id="adminBranch">
+    <option value="ALL">Todas las sucursales</option>
+  </select>
+</div>
+<div class="tools">
+    <label class="search"><span>⌕</span><input id="productSearch" placeholder="Buscar modelo..."></label>
+    <button id="validateAll">✓ Validar inventario</button>
+  </div>
+
+  <div class="list-head"><span>EQUIPOS</span><small id="visibleCount"></small></div>
+  <div id="inventoryList" class="inventory-list"></div>
+</main>
+<div class="mobile-summary"><div><span>Stock físico</span><b id="mobileTotal">0</b></div><button id="mobileValidate">Validar inventario</button></div>
+</section>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="js/supervisor.js"></script>
+</body></html>
