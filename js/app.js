@@ -36,6 +36,11 @@ async function loadInventory(){
       map.get(r.codigo).branches.push([r.sucursal,Number(r.stock_mostrar ?? r.stock)||0,r.codigo_almacen]);
     });
     products=[...map.values()];
+    const branches=new Map();
+    rows.forEach(r=>branches.set(String(r.codigo_almacen),r.sucursal));
+    const branchSelect=$("#publicBranch");
+    branchSelect.innerHTML='<option value="ALL">Todas las sucursales</option>'+[...branches.entries()].sort((a,b)=>a[1].localeCompare(b[1])).map(([code,name])=>`<option value="${code}">${name}</option>`).join("");
+    branchSelect.onchange=()=>{activeBranch=branchSelect.value;render();};
     render();
     $("#models").textContent=products.length;
     $("#units").textContent=products.reduce((a,p)=>a+total(p),0);
@@ -48,18 +53,18 @@ async function loadInventory(){
   }
 }
 
-let activeBrand="Todos", selected=null, maxQty=1;
+let activeBrand="Todos", activeBranch="ALL", selected=null, maxQty=1;
 const $=s=>document.querySelector(s), $$=s=>document.querySelectorAll(s);
 const total=p=>p.branches.reduce((a,b)=>a+b[1],0);
 function render(){
  const q=$("#search").value.trim().toLowerCase();
- const list=products.filter(p=>(activeBrand==="Todos"||p.brand===activeBrand)&&(`${p.brand} ${p.model} ${p.specs}`.toLowerCase().includes(q)));
- $("#products").innerHTML=list.map((p,i)=>`<article class="product">
+ const list=products.filter(p=>(activeBrand==="Todos"||p.brand===activeBrand)&&(`${p.brand} ${p.model} ${p.specs}`.toLowerCase().includes(q))&&(activeBranch==="ALL"||p.branches.some(b=>String(b[2])===activeBranch)));
+ $("#products").innerHTML=list.map((p,i)=>{const vb=activeBranch==="ALL"?p.branches:p.branches.filter(b=>String(b[2])===activeBranch);const vt=vb.reduce((a,b)=>a+b[1],0);return `<article class="product">
  <div class="art"><div class="mock" style="--c1:${p.colors[0]};--c2:${p.colors[1]}"><div><small>${p.brand}</small><b>${p.short}</b></div></div></div>
  <div class="info"><small>${p.brand.toUpperCase()}</small><h3>${p.model}</h3><p class="spec">${p.specs}</p>
- <div class="stock"><i></i><b>${total(p)} unidades disponibles</b></div>
- <div class="branches">${p.branches.map(b=>`<span>${b[0]} <strong>${b[1]}</strong></span>`).join("")}</div>
- <button class="request" data-id="${p.id}">Consultar / Solicitar →</button></div></article>`).join("");
+ <div class="stock"><i></i><b>${vt} unidades disponibles</b></div>
+ <div class="branches">${vb.map(b=>`<span>${b[0]} <strong>${b[1]}</strong></span>`).join("")}</div>
+ <button class="request" data-id="${p.id}">Consultar / Solicitar →</button></div></article>`}).join("");
  $("#count").textContent=`${list.length} equipo${list.length===1?"":"s"}`;
  $("#empty").style.display=list.length?"none":"block";
  $$(".request").forEach(b=>b.onclick=()=>openModal(+b.dataset.id));
@@ -68,7 +73,8 @@ function render(){
 function openModal(id){
  selected=products.find(p=>p.id===id); if(!selected)return;
  $("#mName").textContent=selected.model; $("#mSpecs").textContent=selected.specs; $("#mBrand").textContent=selected.brand; $("#mModel").textContent=selected.short; $("#mStock").textContent=`${total(selected)} disponibles`;
- $("#branch").innerHTML=selected.branches.map(b=>`<option value="${b[0]}" data-stock="${b[1]}" data-whs="${b[2]||""}">${b[0]} — ${b[1]} disponibles</option>`).join("");
+ const modalBranches=activeBranch==="ALL"?selected.branches:selected.branches.filter(b=>String(b[2])===activeBranch);
+ $("#branch").innerHTML=modalBranches.map(b=>`<option value="${b[0]}" data-stock="${b[1]}" data-whs="${b[2]||""}">${b[0]} — ${b[1]} disponibles</option>`).join("");
  $("#qty").value=1; updateBranch(); $("#modal").classList.add("open"); document.body.style.overflow="hidden";
  if(window.gsap)gsap.from(".modal",{y:45,opacity:0,scale:.98,duration:.35,ease:"power2.out"});
 }
@@ -92,4 +98,3 @@ if(window.gsap&&!matchMedia("(prefers-reduced-motion: reduce)").matches){
  gsap.registerPlugin(ScrollTrigger);
  gsap.from(".steps article",{scrollTrigger:{trigger:".steps",start:"top 82%"},opacity:0,y:30,duration:.6,stagger:.12});
 }
-
