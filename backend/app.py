@@ -73,7 +73,7 @@ def health():
 @app.get("/api/inventario")
 def inventory():
  try:
-  a=sap_rows()
+  a=[x for x in sap_rows() if " VP" not in (x["sucursal"] or "").upper()]
   for x in a:
    v=last_validation(x["codigo"],x["codigo_almacen"])
    x["stock_sql"]=x["stock"];x["stock_validado"]=v["stock_validado"] if v else None
